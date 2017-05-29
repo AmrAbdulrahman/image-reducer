@@ -1,14 +1,14 @@
 let _ = require('lodash');
 let args = [{
   name: 'dir',
-  default: __dirname,
+  default: process.env.PWD,
   description: 'The input images directory, current directory by default'
 }, {
   name: 'img',
   description: 'The input image path'
 }, {
   name: 'out',
-  default: __dirname,
+  default: process.env.PWD,
   description: 'The output images directory, current directory by default'
 }, {
   name: 'quality',
