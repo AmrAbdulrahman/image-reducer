@@ -10,6 +10,36 @@
 ## Usage
 `image-reducer -h` to see all options
 
+### Options
+```
+Usage: index.js [options]
+
+	--help, -h
+		Displays help information about this script
+		'index.js -h' or 'index.js --help'
+
+	--dir, -d
+		The input images directory, current directory by default
+
+	--img, -i
+		The input image path
+
+	--out, -o
+		The output images directory, current directory by default
+
+	--quality, -q
+		The output images quality, default 80
+
+	--blur, -b
+		The output images blur value, default 10
+
+	--scale, -s
+		The output images scaled by ratio, default 0.5
+
+	--brightness, -b
+		The output images brightness ratio, default 0.5
+```
+
 ## Examples
 `image-reducer --dir=~/original -out=~/out`
 
