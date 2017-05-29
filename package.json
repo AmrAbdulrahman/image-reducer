@@ -15,5 +15,8 @@
     "lodash": "^4.17.4",
     "mkdir-recursive": "^0.3.0",
     "q": "^1.5.0"
+  },
+  "bin": {
+    "image-reducer": "index.js"
   }
 }
