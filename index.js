@@ -1,3 +1,5 @@
+#! /usr/bin/env node
+
 let Jimp = require('jimp'),
     path = require('path'),
     _ = require('lodash'),
@@ -8,6 +10,7 @@ let Jimp = require('jimp'),
     File = require('./file');
 
 require('./utils/col');
+require('./utils/ends-with-any');
 
 class ImageReducer {
   constructor() {
@@ -31,12 +34,19 @@ class ImageReducer {
 
     // dir
     } else if (this.args.dir) {
-      let images = File.readDir(this.args.dir);
-      console.log(`\nReducing ${images.length} images...`);
+      let images = File
+        .readDir(this.args.dir)
+        .filter((file) => file.endsWithAny(['.png', '.jpg', '.jpeg']));
+
+      images.length && console.log(`\nReducing ${images.length} images...`);
       promises = _.map(images, (image) => this.reduceImage(image));
     }
 
     let timeStart = Date.now();
+
+    if (!promises.length) {
+      console.log(`No images found in ${this.args.dir}`.yellow);
+    }
 
     q
       .all(promises)
@@ -94,6 +104,10 @@ class ImageReducer {
   printResults(processedImages) {
     function row(...cols) {
       console.log('| ' + _.join(_.flatten(cols), ' | ') + ' |');
+    }
+
+    if (!processedImages.length) {
+      return;
     }
 
     function header(...cols) {
