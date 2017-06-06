@@ -10,4 +10,8 @@ module.exports = class File {
   static readDir(dir) {
     return _.map(fs.readdirSync(dir), (file) => path.join(dir, file));
   }
+
+  static getFileName(filePath) {
+    return _.last(filePath.split(path.sep));
+  }
 }

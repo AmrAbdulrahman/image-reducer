@@ -23,19 +23,18 @@ class ImageReducer {
 
   run() {
     let promises = null;
-
-    this.args = Args.process();
+    let args = Args.get();
 
     // single image
-    if (this.args.img) {
+    if (args.img) {
       promises = [
-        this.reduceImage(this.args.img)
+        this.reduceImage(args.img)
       ];
 
     // dir
-    } else if (this.args.dir) {
+    } else if (args.dir) {
       let images = File
-        .readDir(this.args.dir)
+        .readDir(args.dir)
         .filter((file) => file.endsWithAny(['.png', '.jpg', '.jpeg']));
 
       images.length && console.log(`\nReducing ${images.length} images...`);
@@ -45,7 +44,7 @@ class ImageReducer {
     let timeStart = Date.now();
 
     if (!promises.length) {
-      console.log(`No images found in ${this.args.dir}`.yellow);
+      console.log(`No images found in ${args.dir}`.yellow);
     }
 
     q
@@ -58,26 +57,27 @@ class ImageReducer {
 
   reduceImage(imagePath) {
     let defer = q.defer();
-    let fileName = _.last(imagePath.split('/'));
+    let args = Args.get();
+    let imageName = File.getFileName(imagePath);
 
     Jimp.read(imagePath, (err, img) => {
       if (err) {
         defer.reject(err);
       };
 
-      let outputPath = path.join(this.args.out, fileName);
+      let outputPath = path.join(args.out, imageName);
 
       img
-        .scale(this.args.scale)
-        .quality(this.args.quality)
-        .blur(this.args.blur)
-        .brightness(this.args.brightness)
+        .scale(args.scale)
+        .quality(args.quality)
+        .blur(args.blur)
+        .brightness(args.brightness)
         .write(outputPath, () => {
           let originalSize = File.size(imagePath) / 1000; // KB
           let outputSize = File.size(outputPath) / 1000;
 
           defer.resolve({
-            fileName,
+            imageName,
             originalSize,
             outputSize,
           });
@@ -89,8 +89,9 @@ class ImageReducer {
 
   reduceImageParallel(imagePath) {
     let defer = q.defer();
+    let args = Args.get();
 
-    execFile('node', ['./reduce-image-task', `--image=${imagePath}`, `--out=${this.args.out}`], (error, stdout, stderr) => {
+    execFile('node', ['./reduce-image-task', `--image=${imagePath}`, `--out=${args.out}`], (error, stdout, stderr) => {
       if (error) {
         return defer.reject(error);
       }
@@ -121,23 +122,29 @@ class ImageReducer {
 
     console.log(`\n${processedImages.length} image(s) processed\n`.green);
 
+    const nameColSize = _.reduce(processedImages, (max, img) => Math.max(max, img.imageName.length), 0);
+    const fromColSize = 8;
+    const toColSize = 6;
+    const lossColSize = 8;
+
+
     // header
     header(
-      'File'.col(50),
-      'From (KB)'.col(10),
-      'To (KB)'.col(10),
-      'Loss %'.col(10)
+      'File'.col(nameColSize),
+      'Frm KB'.col(fromColSize),
+      'To KB'.col(toColSize),
+      'Loss'.col(lossColSize)
     );
 
     _.each(processedImages, (image) => {
-      let {fileName, originalSize, outputSize} = image;
+      let {imageName, originalSize, outputSize} = image;
       let sizeReduction = (100 - (outputSize / originalSize * 100)).toFixed(2);
 
       row(
-        fileName.col(50).bold,
-        originalSize.toFixed(2).col(10).blue,
-        outputSize.toFixed(2).col(10).green,
-        (sizeReduction + ' %').col(10).bold
+        imageName.col(nameColSize).bold,
+        originalSize.toFixed(2).col(fromColSize).blue,
+        outputSize.toFixed(2).col(toColSize).green,
+        (sizeReduction + ' %').col(lossColSize).bold
       );
     });
   }
