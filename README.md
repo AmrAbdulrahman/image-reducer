@@ -41,7 +41,7 @@ Usage: index.js [options]
 ```
 
 ## Examples
-`image-reducer --dir=~/original -out=~/out`
+`image-reducer --dir ~/original -out ~/out`
 
 or use shorthands as following
 
