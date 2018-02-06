@@ -64,10 +64,10 @@ Time: 8566 ms
 ```
 
 ### Original (2.4 MB)
-![Original](https://s4.postimg.org/va9rznv9p/file5.jpg)
+![Original](https://raw.githubusercontent.com/AmrAbdulrahman/image-reducer/master/samples/original.jpeg)
 
 ### Reduced (162 KB, 93% less)
-![Original](https://s22.postimg.org/e4japjcox/red-love-romantic-flowers.jpg)
+![Original](https://raw.githubusercontent.com/AmrAbdulrahman/image-reducer/master/samples/reduced.jpeg)
 
 ## License
 Come ooon..
